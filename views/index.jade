@@ -1,5 +1,7 @@
-extends layout
-
-block content
-  h1= title
-  p Welcome to #{title}
+extends ../node_modules/jade-bootstrap/_bootstrap
+head
+  title=title
+block body
+  +navbar("Mini Project", "dropdown_menu")
+    +nav_item("/", "active") Home
+    +nav_item("/list") Stock
