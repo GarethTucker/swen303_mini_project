@@ -1,11 +1,16 @@
 extends ../node_modules/jade-bootstrap/_bootstrap
 head
-  title=title
+	title=title
 block body
-  +navbar("Mini Project", "dropdown_menu")
-    +nav_item("/", "active") Home
-    +nav_item("/browse") Browse
-    +nav_item("/submit") Submit
-  .form-group.has-feedback(style='width:600px')
-      input.form-control(type='text', placeholder='Search database')
-      i.glyphicon.glyphicon-search.form-control-feedback
+	+navbar("Mini Project", "dropdown_menu")
+		+nav_item("/", "active") Home
+		+nav_item("/browse") Browse
+		+nav_item("/submit") Submit
+	.form-group.has-feedback(style='max-width:600px')
+		input.form-control(type='text', placeholder='Search database')
+		i.glyphicon.glyphicon-search.form-control-feedback
+	.container
+		h1=title
+		.container
+			p Welcome to #{title}. We have an excellent collection of videos in stock for you.
+			| We are based in #{place}.
