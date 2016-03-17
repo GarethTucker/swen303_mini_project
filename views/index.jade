@@ -1,4 +1,5 @@
 extends ../node_modules/jade-bootstrap/_bootstrap
+
 head
 	title=title
 block body
@@ -6,9 +7,13 @@ block body
 		+nav_item("/", "active") Home
 		+nav_item("/browse") Browse
 		+nav_item("/submit") Submit
-	.form-group.has-feedback(style='max-width:600px')
-		input.form-control(type='text', placeholder='Search database')
-		i.glyphicon.glyphicon-search.form-control-feedback
+	form(name="search", method="get", action="/search")
+		.form-group.has-feedback(style='max-width:600px')
+			div.input
+				input.form-control(type='text', placeholder='Search database', name='query')
+				i.glyphicon.glyphicon-search.form-control-feedback
+			div.actions
+				input(type="submit", value="add")
 	.container
 		h1=title
 		.container
