@@ -10,7 +10,7 @@ block body
 	form(name="search", method="get", action="/search")
 		.form-group.has-feedback(style='max-width:600px')
 			div.input
-				input.form-control(type='text', placeholder='Search database', name='query')
+				input.form-control(type='text', placeholder='Search database', name='bob')
 				i.glyphicon.glyphicon-search.form-control-feedback
 			div.actions
 				input(type="submit", value="add")
@@ -19,3 +19,13 @@ block body
 		.container
 			p Welcome to #{title}. We have an excellent collection of videos in stock for you.
 			| We are based in !{place}.
+
+	form(name="search", method="get", action="/browse")
+		.form-group.has-feedback(style='max-width:600px')
+			div.actions
+				input(type="submit", value="browse")
+	
+	ul
+		each val in database_list
+			li: a(href = "display/"+val) #{val};
+	p !{xml_doc}
