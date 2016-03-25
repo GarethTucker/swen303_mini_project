@@ -1,29 +1,31 @@
 extends ../node_modules/jade-bootstrap/_bootstrap
-
-head
-    title=title
+append styles
+    link(rel="stylesheet", href="/stylesheets/style.css")
 block body
-    +navbar("Mini Project", "dropdown_menu")
+    +navbar("Colenso", "dropdown_menu")
         +nav_item("/", "active") Home
         +nav_item("/browse") Browse
         +nav_item("/submit") Submit
+
     .container
-        form(name="search", method="get", action="/search/XQUERY")
-            .input(style='max-width:600px')
-                input.form-control(type='text', placeholder='XQUERY', name='input')
-                button.btn.btn-default(type='submit' value = 'xquery')
-                    +icon("search")
+        form(action='/search', method='get')
+            +tab-list(['Text', 'XQuery'],0)
+                +tab('Text', 'active')
+                    +input('text', 'text_search', 'Text', '', 'text_search')
+                +tab('XQuery')
+                    +input('text', 'query_search', 'XQuery', '', 'query_search')
+            +submit('search')
+
     .container
-        form(name="search", method="get", action="/search/Text")
-            .input(style='max-width:600px')
-                .input
-                    input.form-control(type='text', placeholder='Text', name='input')
-                    button.btn.btn-default(type='submit')
-                        +icon("search")
-    .container
-        h1=title
-        .container
-            p #{search_result}
+        -if(text_search_result !== undefined){
+            ul
+                each xml in text_search_result
+                    li
+                        a(href='display/id/'+xml.id) #{xml.id}
+        -}
+        -if(query_search_results != undefined){
+            p !{query_search_results}
+        -}
 
     form(name="search", method="get", action="/browse/")
         .form-group.has-feedback(style='max-width:600px')
@@ -31,20 +33,35 @@ block body
                 input(type="submit", value="browse")
     ul
         //-console.log("database_list[0]: "+database_list[0]);
-        -var heading;
-        -for (i = 0; i < database_list.length; i++) {
-            -var database_list_split = database_list[i].split("/");
-            -if (heading != database_list_split[0]) {
-                -heading = database_list_split[0];
+        -if(database_list != undefined){
+            -var heading;
+            -for (i = 0; i < database_list.length; i++) {
+                -var database_list_split = database_list[i].split("/");
+                -if (heading != database_list_split[0]) {
+                    -heading = database_list_split[0];
                     form(name="author", method="get" , action= heading)
                         div.actions
                             input.btn.btn-default(type="submit", value= heading)
+                -};
+                //-console.log("database_list[i]"+database_list[i]);
+                -var link_text = "/display/"+database_list[i];
+
+                //-console.log("link_text:"+link_text)
+                li: a(href = link_text) #{database_list[i]};
             -};
-            //-console.log("database_list[i]"+database_list[i]);
-            -var link_text = "/display/"+database_list[i];
+        -}
 
-            //-console.log("link_text:"+link_text)
-            li: a(href = link_text) #{link_text};
-        -};
+    -if(xml_doc !== undefined){
+        +tab-list(['Text', 'XML'],0)
+            +tab('Text', 'active')
+                p !{xml_doc.text}
+            +tab('XML')
+                p #{xml_doc.text}
+        -console.log("xml_doc.id: "+xml_doc.xml_id);
+        a(href='/download/id/'+xml_doc.xml_id) #{xml_doc.xml_id}
+    -}
 
-    p !{xml_doc}
+    form(action="/save", method="post", enctype="multipart/form-data")
+        input(type="file", name="displayImage")
+        button(action='submit') Submit
+
