@@ -149,7 +149,7 @@ router.get("/browse", function(req,res){
 			else {
 				var xml_results = result.result;
 				var xml_lines = xml_results.split("\n");
-				res.render('index', { title: 'Browse', place: 'default', database_list: xml_lines, search_result: result.result, text_search_result: []});
+				res.render('index', { title: 'Browse', place: 'default', database_list: xml_lines, search_result: result.result});
 			}
 		}
 	);
@@ -168,7 +168,7 @@ router.get("/browse/*", function(req,res){
 				var xml_results = result.result;
 				console.log("xml_results; "+xml_results);
 				var xml_lines = xml_results.split("\n");
-				res.render('index', { title: 'Browse', place: 'default', database_list: xml_lines, search_result: result.result, text_search_result: []});
+				res.render('index', { title: 'Browse', place: 'default', database_list: xml_lines, search_result: result.result});
 			}
 		}
 	);
@@ -176,18 +176,19 @@ router.get("/browse/*", function(req,res){
 
 router.get("/display/*", function(req, res){
 	var url = req.originalUrl;
-	console.log(url);
 	var path = url.replace('/display', 'Colenso');
-	// path = path.shift();
 	console.log('path:'+path);
-	// path = path.join('/');
-	// client.execute(tei + "for $doc in ('Colenso') where matches(document-uri($doc),  '" +path+ "') return $doc",
 		client.execute("XQUERY doc('"+path+"')",
 			function(error, result){
 				if(error){ console.error(error);}
 				else {
-					res.render('index', {title: 'display', database_list: [], xml_doc: result.result, search_result: result.result, text_search_result: []});
-					//res.send(result.result);
+					res.render('index', {
+						title: 'display',
+						database_list: [],
+						xml_doc: {
+							text: result.result
+					},
+						search_result: result.result});
 				}
 			}
 	);
