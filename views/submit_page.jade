@@ -1,0 +1,23 @@
+extends ../node_modules/jade-bootstrap/_bootstrap
+append styles
+    link(rel="stylesheet", href="/stylesheets/style.css")
+
+block body
+    +navbar("Colenso", "dropdown_menu")
+        +nav_item("/") Home
+        +nav_item("/browse") Browse
+        +nav_item("/submit_page", "active") Submit
+
+    .container
+        form(action='/search', method='get')
+            +tab-list(['Text', 'XQuery'],0)
+                +tab('Text', 'active')
+                    +input('text', 'text_search', 'Text', '', 'text_search')
+                +tab('XQuery')
+                    +input('text', 'query_search', 'XQuery', '', 'query_search')
+            +submit('search')
+
+    form(action="/save", method="post", enctype="multipart/form-data")
+        input(type="file", name="file")
+        button(action='submit') Submit
+

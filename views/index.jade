@@ -5,7 +5,7 @@ block body
     +navbar("Colenso", "dropdown_menu")
         +nav_item("/", "active") Home
         +nav_item("/browse") Browse
-        +nav_item("/submit") Submit
+        +nav_item("/submit_page") Submit
 
     .container
         form(action='/search', method='get')
@@ -27,10 +27,6 @@ block body
             p !{query_search_results}
         -}
 
-    form(name="search", method="get", action="/browse/")
-        .form-group.has-feedback(style='max-width:600px')
-            div.actions
-                input(type="submit", value="browse")
     ul
         //-console.log("database_list[0]: "+database_list[0]);
         -if(database_list != undefined){
@@ -60,8 +56,3 @@ block body
         -console.log("xml_doc.id: "+xml_doc.xml_id);
         a(href='/download/id/'+xml_doc.xml_id) #{xml_doc.xml_id}
     -}
-
-    form(action="/save", method="post", enctype="multipart/form-data")
-        input(type="file", name="displayImage")
-        button(action='submit') Submit
-

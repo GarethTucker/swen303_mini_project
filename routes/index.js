@@ -1,4 +1,5 @@
 var express = require('express');
+var multer = require('multer')
 var router = express.Router();
 var basex = require('basex');
 var client = new basex.Session("127.0.0.1", 1984, "admin", "admin");
@@ -8,6 +9,19 @@ client.execute("OPEN Colenso");
 var fs = require('fs')
 
 var tei = "XQUERY declare default element namespace 'http://www.tei-c.org/ns/1.0'; ";
+var storage = multer.memoryStorage();
+var upload = multer({
+	storage: storage
+})
+router.use(upload.single('file'));
+
+
+router.get('/submit_page', function (req, res) {
+	res.render('submit_page');
+})
+
+
+
 
 
 /* GET home page. */
@@ -17,7 +31,7 @@ router.get("/",function(req,res){
 		function (error, result) {
 			if(error){ console.error(error);}
 			else {
-				res.render('index', { title: 'ECS Video Rental', place: result.result, database_list: [], search_result: []});
+				res.render('index', { title: 'ECS Video Rental', place: result.result });
 			}
 		}
 	);
@@ -25,11 +39,16 @@ router.get("/",function(req,res){
 
 router.post('/save', function(req, res){
 	console.log("Save")
-	//var path = req.files.path
-	//console.log("path: "+path)
-	console.log("pipe"+req.file)
-
-})
+	if(req.file){
+		var xml = req.file.buffer.toString();
+		console.log('xml: '+xml);
+		client.execute('ADD TO "Colenso" "'+xml+'"', function(error, result){
+			if(error){ console.error(error);}
+			else{ console.log("FILE UPLOADED");}
+		});
+	}
+	res.redirect('/')
+});
 
 
 
@@ -122,42 +141,6 @@ router.get("/search/", function(req, res){
 		);
 	}
 })
-
-// router.get("/search/XQUERY",function(req,res){
-// 	//tei = "XQUERY declare namespace tei = 'http://www.tei-c.org/ns/1.0'; ";
-// 	var q = req.query;
-// 	var input = q.input;
-// 	console.log("tei+input: "+tei+input);
-// 	client.execute( (tei+input),
-// 		function (error, result) {
-// 			if(error){ console.error(error);}
-// 			else {
-// 				console.log("result: "+result.result);
-// 				res.render('index', { title: 'ECS Video Rental', database_list: [], search_result: result.result });
-// 			}
-// 		}
-// 	);
-// });
-//
-// router.get("/search/Text",function(req,res){
-// 	//tei = "XQUERY declare namespace tei = 'http://www.tei-c.org/ns/1.0'; ";
-// 	var q = req.query;
-// 	var input = q.input;
-// 	console.log("input: "+input);
-// 	//var full_query = tei+ "\nfor $t in //TEI \nwhere matches($t,'" + input + "', 'i')  = true() \nreturn db:path($t)"
-// 	var full_query = (tei+ "TEI[. contains text "+input+"]");
-// 	console.log("Full Query: "+full_query)
-// 	client.execute( (full_query),
-// 		function (error, result) {
-// 			if(error){ console.error(error);}
-// 			else {
-// 				console.log("result.result.length: "+result.result.length)
-// 				xml_split = result.result.split('/n');
-// 				res.render('index', { title: 'Search Results', database_list: [], text_search_result: xml_split});
-// 			}
-// 		}
-// 	);
-// });
 
 router.get("/browse", function(req,res){
 	client.execute("XQUERY db:list('Colenso')",
