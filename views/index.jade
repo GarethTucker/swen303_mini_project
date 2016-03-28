@@ -35,7 +35,7 @@ block body
                 -var database_list_split = database_list[i].split("/");
                 -if (heading != database_list_split[0]) {
                     -heading = database_list_split[0];
-                    form(name="author", method="get" , action= heading)
+                    form(name="author", method="get" , action= "browse/"+heading)
                         div.actions
                             input.btn.btn-default(type="submit", value= heading)
                 -};
@@ -48,10 +48,17 @@ block body
         -}
 
     -if(xml_doc !== undefined){
-        +tab-list(['Text', 'XML'],0)
-            +tab('Text', 'active')
+        +tab-list(['Readable', 'XML', 'Edit'])
+            +tab('Readable', 'active')
                 p !{xml_doc.text}
             +tab('XML')
-                p #{xml_doc.text}
-        a(href='/download/id/'+xml_doc.xml_id) #{xml_doc.xml_id}
+                pre.
+                    #{xml_doc.text}
+            +tab('Edit')
+                .container
+                    form(action = "/edit/"+xml_doc.path, method = "post")
+                        textarea.form-control(name = 'xml_text', rows = 100, cols = 100) #{xml_doc.text}
+                        input.btn.btn-default(type="submit", value="EDIT")
+            a(href="/download/"+xml_doc.path)
+                button DOWNLOAD
     -}
