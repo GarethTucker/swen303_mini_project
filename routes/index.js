@@ -107,7 +107,7 @@ router.get('/search/', function(req, res){
 		})
 	}else{
 		var q = req.query;
-		var input = q.query_search;
+		var input = q.query_input;
 		console.log("tei+input: "+tei+input);
 		client.execute( (tei+input),
 			function (error, result) {
