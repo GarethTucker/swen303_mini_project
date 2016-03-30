@@ -4,17 +4,33 @@ append styles
 block body
     +navbar("Colenso", "dropdown_menu")
         +nav_item("/", "active") Home
-        +nav_item("/browse") Browse
+        +nav_item("/browse_page") Browse
         +nav_item("/submit_page") Submit
-
+    block image
+        img.center-block(src='/images/logo.jpg')
+    -console.log("PREVIOUS QUERY: "+previous_input)
     .container
         form(action='/search', method='get')
+            input(id= "previous_input", type='hidden', name='previous_input', value = previous_input)
             +tab-list(['Text', 'XQuery'],0)
                 +tab('Text', 'active')
-                    +input('text', 'text_search', 'Text', '', 'text_search')
+                    .form-group
+                        label(for="text_search")
+                        input.form-control(type="text",id="text_search",placeholder="Text",name="text_search")
                 +tab('XQuery')
-                    +input('text', 'query_search', 'XQuery', '', 'query_search')
-            +submit('search')
+                    .form-group
+                        label(for="text_search")
+                        input.form-control(type="text",id="query_input",placeholder="XQuery",name="query_input")
+            .col-sm-6
+                - var type = (typeof style === 'undefined') ? "default" : style
+                input.btn(class="btn-#{type}",type="submit",value="Submit",
+                    onclick="document.getElementById('previous_input').value = ''"
+                )
+            -if(previous_input !== undefined){
+                .col-sm-6
+                    .form-group
+                        button.btn.btn-default(type="submit") Refine Search
+            -}
 
     .container
         -if(text_search_result !== undefined){
@@ -27,38 +43,53 @@ block body
             p !{query_search_results}
         -}
 
-    ul
-        //-console.log("database_list[0]: "+database_list[0]);
+    block list
         -if(database_list != undefined){
             -var heading;
             -for (i = 0; i < database_list.length; i++) {
                 -var database_list_split = database_list[i].split("/");
-                -if (heading != database_list_split[0]) {
-                    -heading = database_list_split[0];
-                    form(name="author", method="get" , action= "browse/"+heading)
-                        div.actions
-                            input.btn.btn-default(type="submit", value= heading)
-                -};
-                //-console.log("database_list[i]"+database_list[i]);
-                -var link_text = "/display/"+database_list[i];
+                -if (heading != database_list_split[depth] && depth <= 1 && depth !== undefined) {
+                    -heading = database_list_split[depth];
+                    -if(i%2 == 0){
+                        form.col-sm-6.text-center(name="author", method="get" , action= "browse_page/" + heading)
+                            div.actions
+                                input(type='hidden', name = 'depth', value= depth)
+                                input(type='hidden', name = 'folder', value = old_folder + '/' + heading)
+                                input.btn.btn-default(type="submit", value= heading, style='min-width: 250px')
+                    -}else{
+                        form.col-sm-6.text-center(name="author", method="get" , action= "browse_page/" + heading)
+                            div.actions
+                                input(type='hidden', name = 'depth', value= depth)
+                                input(type='hidden', name = 'folder', value = old_folder + '/' + heading)
+                                input.btn.btn-default(type="submit", value= heading, style='min-width: 250px')
+                    -};
+                -}
 
-                //-console.log("link_text:"+link_text)
-                li: a(href = link_text) #{database_list[i]};
+
+                -if(depth > 1 || depth === undefined){
+                .col-sm-12.text-center
+                    -var link_text = "/display/"+database_list[i];
+                    a(href = link_text) #{database_list[i]};
+                -}
             -};
-        -}
-
-    -if(xml_doc !== undefined){
-        +tab-list(['Readable', 'XML', 'Edit'])
-            +tab('Readable', 'active')
-                p !{xml_doc.text}
-            +tab('XML')
-                pre.
-                    #{xml_doc.text}
-            +tab('Edit')
+        -};
+    .container(style='max-width: 1500px')
+        -if(xml_doc !== undefined){
+            +tab-list(['Readable', 'XML', 'Edit'])
+                +tab('Readable', 'active')
+                    pre.
+                        !{xml_doc.text}
+                +tab('XML')
+                    pre.
+                        #{xml_doc.text}
+                +tab('Edit')
+                    .container
+                        form(action = "/edit/"+xml_doc.path, method = "post")
+                            textarea.form-control(name = 'xml_text', rows = 100, cols = 100) #{xml_doc.text}
+                            input.btn.btn-default(type="submit", value="EDIT")
                 .container
-                    form(action = "/edit/"+xml_doc.path, method = "post")
-                        textarea.form-control(name = 'xml_text', rows = 100, cols = 100) #{xml_doc.text}
-                        input.btn.btn-default(type="submit", value="EDIT")
-            a(href="/download/"+xml_doc.path)
-                button DOWNLOAD
-    -}
+                    a.col-sm-6.text-center(href="/download/"+xml_doc.path)
+                        button.btn.btn-default DOWNLOAD
+                    a.col-sm-6.text-center(href="/delete/" + xml_doc.path)
+                        button.btn.btn-default DELETE
+        -}

@@ -1,0 +1,42 @@
+extends ../node_modules/jade-bootstrap/_bootstrap
+append styles
+    link(rel="stylesheet", href="/stylesheets/style.css")
+
+block body
+    +navbar("Colenso", "dropdown_menu")
+        +nav_item("/") Home
+        +nav_item("/browse_page", "active") Browse
+        +nav_item("/submit_page") Submit
+    block image
+        img.center-block(src='/images/logo.jpg')
+    block list
+        -if(database_list != undefined){
+            -var heading;
+            -for (i = 0; i < database_list.length; i++) {
+                -var database_list_split = database_list[i].split("/");
+                -if (heading != database_list_split[depth] && depth <= 1 && depth !== undefined) {
+                    -heading = database_list_split[depth];
+                    -if(i%2 == 0){
+                        form.col-sm-6.text-center(name="author", method="get" , action= "browse_page/" + heading)
+                            div.actions
+                                input(type='hidden', name = 'depth', value= depth)
+                                input(type='hidden', name = 'folder', value = old_folder + '/' + heading)
+                                input.btn.btn-default(type="submit", value= heading, style='min-width: 250px')
+                    -}else{
+                        form.col-sm-6.text-center(name="author", method="get" , action= "browse_page/" + heading)
+                            div.actions
+                                input(type='hidden', name = 'depth', value= depth)
+                                input(type='hidden', name = 'folder', value = old_folder + '/' + heading)
+                                input.btn.btn-default(type="submit", value= heading, style='min-width: 250px')
+                    -};
+                -}
+
+
+                -if(depth > 1 || depth === undefined){
+                    .col-sm-12.text-center
+                        -var link_text = "/display/"+database_list[i];
+                        a(href = link_text) #{database_list[i]};
+                -}
+            -};
+        -};
+

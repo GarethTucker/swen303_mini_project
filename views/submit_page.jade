@@ -5,19 +5,14 @@ append styles
 block body
     +navbar("Colenso", "dropdown_menu")
         +nav_item("/") Home
-        +nav_item("/browse") Browse
+        +nav_item("/browse_page") Browse
         +nav_item("/submit_page", "active") Submit
+    block image
+        img.center-block(src='/images/logo.jpg')
 
-    .container
-        form(action='/search', method='get')
-            +tab-list(['Text', 'XQuery'],0)
-                +tab('Text', 'active')
-                    +input('text', 'text_search', 'Text', '', 'text_search')
-                +tab('XQuery')
-                    +input('text', 'query_search', 'XQuery', '', 'query_search')
-            +submit('search')
-
-    form(action="/save", method="post", enctype="multipart/form-data")
-        input(type="file", name="file")
-        button(action='submit') Submit
+    .container.center-text
+        form(action="/save", method="post", enctype="multipart/form-data")
+            input.col-sm-5.btn.btn-default(type="file", name="file")
+            .col-sm-2
+            button.col-sm-5.btn.btn-default(action='submit', style = 'max-width: 100px') Submit
 
